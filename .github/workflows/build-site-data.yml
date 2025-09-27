@@ -1,6 +1,6 @@
 name: "EUR-Lex — Build site data"
 
-on:
+# on:
   workflow_dispatch: {}          # manual 'Run workflow' button
   schedule:
     - cron: "10 6 * * *"         # daily 06:10 UTC

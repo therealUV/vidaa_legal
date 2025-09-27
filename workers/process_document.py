@@ -161,31 +161,72 @@ def extract_amounts(text):
         amounts.append({"amount": val, "currency": "EUR", "label": "stated_value"})
     return amounts[:5]
 
-def summarise_150w(title, text):
-    body = text[:4000]
+# === UPDATED: produce ~500-word newsletter-style intro with a References block ===
+def summarise_150w(title, text, url=None, pub_dt=None):
+    body = text[:6000]
+    # Format a friendly date for references if available
+    date_str = None
+    if isinstance(pub_dt, datetime):
+        try:
+            date_str = pub_dt.strftime("%d %b %Y")
+        except Exception:
+            date_str = None
+
     if USE_OPENAI and OPENAI_CLIENT:
         prompt = (
-            "Summarise neutrally in ~150 words. Focus on changes to financing/eligibility, "
-            "which programme/instrument is involved, amounts, and expected direction for innovation. "
-            "UK English, minimal adjectives."
+            "Write a ~500-word newsletter-style summary for policy/finance readers tracking EU innovation, "
+            "defence and capital markets. Be fun but informative, crisp and precise (UK English). Connect the dots "
+            "without hype. Include:\n"
+            "1) What happened and why it matters.\n"
+            "2) Programme/instrument links (e.g., EDF, EDIP, InvestEU, EIB/EIF, SAFE, CMU) only if present in the text—do not invent.\n"
+            "3) Any € amounts, timelines, eligibility/financing changes.\n"
+            "4) Implications for startups/SMEs, primes, and regulators.\n"
+            "5) One or two short, smart ‘so what’ insights.\n\n"
+            "After the summary, add a 'References' block with 2–5 bullet points citing ONLY the source(s) in the provided text. "
+            "Use this format per bullet: • <Site or Title> — <date if available> — <URL>. If you don't know the date, omit it. "
+            "Do not fabricate sources or facts."
         )
-        content = f"TITLE: {title}\nTEXT:\n{body}"
+        content = (
+            f"TITLE: {title or '(untitled)'}\n"
+            f"SOURCE_URL: {url or 'N/A'}\n"
+            f"SOURCE_DATE: {date_str or 'N/A'}\n"
+            f"ARTICLE_TEXT:\n{body}"
+        )
         try:
             resp = OPENAI_CLIENT.chat.completions.create(
                 model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
                 messages=[
-                    {"role": "system", "content": "You are an analyst producing neutral 150-word policy summaries."},
+                    {"role": "system", "content": "You are a precise newsletter writer for EU policy and finance audiences."},
                     {"role": "user", "content": prompt + "\n\n" + content}
                 ],
-                temperature=0.2,
-                max_tokens=280
+                temperature=0.3,
+                max_tokens=1100
             )
             return resp.choices[0].message.content.strip()
         except Exception:
             pass
+
+    # Fallback (no OpenAI): take the first ~500 words and append a simple reference
     sentences = re.split(r"(?<=[\.\?\!])\s+", text)
-    cut = " ".join(sentences[:7])
-    return (cut[:1450] + "…") if len(cut) > 1450 else cut
+    # collect sentences until roughly 500 words
+    acc = []
+    wc = 0
+    for s in sentences:
+        words = s.split()
+        if not words:
+            continue
+        if wc + len(words) > 520:
+            break
+        acc.append(s)
+        wc += len(words)
+    summary = " ".join(acc).strip()
+    if not summary:
+        summary = (text[:3800] + "…") if len(text) > 3800 else text
+
+    ref_date = f" — {date_str}" if date_str else ""
+    src = url or ""
+    refs = "\n\nReferences\n• Source" + (ref_date if ref_date else "") + (f" — {src}" if src else "")
+    return summary + refs
 
 def week_path():
     now = datetime.now(timezone.utc).isocalendar()
@@ -236,7 +277,8 @@ def main():
             instrument = detect_instrument(text)
             tech = detect_tech(text)
             amounts = extract_amounts(soup.get_text(" ", strip=True))
-            summary = summarise_150w(title, text)
+            # === UPDATED CALL: pass URL + date so the summary can cite them ===
+            summary = summarise_150w(title, text, url=(final_url or url), pub_dt=pub_dt)
             dedupe = sha256((final_url or url) + title + (pub_dt.isoformat() if pub_dt else ""))
 
             rec = {
@@ -256,6 +298,7 @@ def main():
                 "actors": [],
                 "tech_area": tech,
                 "monetary_values": amounts,
+                # Field name left unchanged for backwards compatibility
                 "summary_150w": summary,
                 "key_points": [],
                 "implications": {

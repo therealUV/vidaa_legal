@@ -174,7 +174,7 @@ def summarise_150w(title, text, url=None, pub_dt=None):
 
     if USE_OPENAI and OPENAI_CLIENT:
         prompt = (
-            "Write a ~500-word newsletter-style summary for policy/finance readers tracking EU innovation, "
+            "Write a ~800-word newsletter-style summary for policy/finance readers tracking EU innovation, "
             "defence and capital markets. Be fun but informative, crisp and precise (UK English). Connect the dots "
             "without hype. Include:\n"
             "1) What happened and why it matters.\n"

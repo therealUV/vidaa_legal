@@ -1,0 +1,9 @@
+{
+  "schema": "timeline.v1",
+  "window": {
+    "start": "2025-10-06T06:16:34.857121+00:00",
+    "end": "2025-10-13T06:16:34.857121+00:00",
+    "timezone": "Europe/Amsterdam"
+  },
+  "events": []
+}

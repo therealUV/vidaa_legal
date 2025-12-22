@@ -4,14 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>EUR-Lex Research Feed</title>
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml" />
   <link rel="manifest" href="./assets/manifest.json" />
   <link rel="stylesheet" href="./assets/ui.css" />
 </head>
-    <script src="./assets/theme.js" defer></script>
-  <script type="module" src="./assets/app.js"></script>
-  <script type="module" src="./assets/chat.js"></script>
-</body>
-</html>
 <body>
   <header class="site glass">
     <div class="container header-inner">
@@ -21,53 +17,107 @@
         <input id="q" type="search" placeholder="Search posts & reports…" autocomplete="off" />
         <label class="ask"><input id="askAi" type="checkbox" /> <span>Ask AI</span></label>
       </label>
+      
+      <div class="header-actions">
+        <a href="./settings.html" class="settings-link" title="Settings">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <span id="notifBadge" class="notif-badge"></span>
+        </a>
+      </div>
     </div>
 
-    <!-- BIG filter widget (glass) -->
+    <!-- Notification Banner -->
+    <div id="notifBanner" class="notif-banner container"></div>
+
+    <!-- Filter Widget -->
     <div class="container filterbar glass card">
-      <div class="row">
-        <!-- Type -->
-        <div class="field">
-          <label>Type</label>
-          <div class="seg">
-            <label><input type="checkbox" id="fltTypePosts" checked> Posts</label>
-            <label><input type="checkbox" id="fltTypeReports" checked> Reports</label>
+      <!-- Row 1: Primary Filters -->
+      <div class="filter-row filter-row-primary">
+        <div class="filter-group">
+          <span class="filter-group-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Type
+          </span>
+          <div class="filter-options">
+            <label class="filter-chip"><input type="checkbox" id="fltTypePosts" checked><span>Posts</span></label>
+            <label class="filter-chip"><input type="checkbox" id="fltTypeReports" checked><span>Reports</span></label>
           </div>
         </div>
 
-        <!-- Sources (NEW) -->
-        <div class="field">
-          <label>Sources</label>
-          <div id="srcBar" class="pills"></div>
-        </div>
+        <div class="filter-divider"></div>
 
-        <!-- Categories (dynamic; JS fills) -->
-        <div class="field">
-          <label>Categories</label>
-          <div id="catBar" class="pills"></div>
-        </div>
-
-        <!-- Date -->
-        <div class="field">
-          <label>Date</label>
-          <div class="seg">
-            <label><input type="radio" name="datewin" value="7"> 7d</label>
-            <label><input type="radio" name="datewin" value="30"> 30d</label>
-            <label><input type="radio" name="datewin" value="90"> 90d</label>
-            <label><input type="radio" name="datewin" value="0" checked> All</label>
+        <div class="filter-group">
+          <span class="filter-group-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Date Range
+          </span>
+          <div class="filter-options filter-options-segmented">
+            <label class="filter-seg"><input type="radio" name="datewin" value="7"><span>7d</span></label>
+            <label class="filter-seg"><input type="radio" name="datewin" value="30"><span>30d</span></label>
+            <label class="filter-seg"><input type="radio" name="datewin" value="90"><span>90d</span></label>
+            <label class="filter-seg"><input type="radio" name="datewin" value="0" checked><span>All</span></label>
           </div>
         </div>
 
-        <!-- Tags -->
-        <div class="field">
-          <label>Tags</label>
-          <div id="pillbar" class="pills scroll"></div>
+        <div class="filter-divider"></div>
+
+        <div class="filter-group">
+          <span class="filter-group-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Visibility
+          </span>
+          <label class="filter-toggle">
+            <input type="checkbox" id="showReadToggle">
+            <span class="toggle-track"></span>
+            <span class="toggle-text">Show read</span>
+            <span id="readCountBadge" class="read-count-badge"></span>
+          </label>
         </div>
 
-        <!-- Actions -->
-        <div class="field right">
-          <button id="clearBtn" class="btn subtle">Clear</button>
-          <button id="refreshBtn" class="btn">Refresh</button>
+        <div class="filter-actions">
+          <button id="clearBtn" class="btn-filter-action btn-clear" title="Clear all filters">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Clear
+          </button>
+          <button id="refreshBtn" class="btn-filter-action btn-refresh" title="Refresh feed">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- Row 2: Sources & Categories -->
+      <div class="filter-row filter-row-secondary">
+        <div class="filter-group filter-group-expand">
+          <span class="filter-group-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            Sources
+          </span>
+          <div id="srcBar" class="filter-pills"></div>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <div class="filter-group filter-group-expand">
+          <span class="filter-group-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            Categories
+          </span>
+          <div id="catBar" class="filter-pills"></div>
+        </div>
+      </div>
+
+      <!-- Row 3: Tags -->
+      <div class="filter-row filter-row-tags">
+        <div class="filter-group filter-group-full">
+          <span class="filter-group-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            Tags
+          </span>
+          <div id="pillbar" class="filter-pills filter-pills-scroll"></div>
         </div>
       </div>
     </div>
@@ -75,36 +125,18 @@
 
   <div id="notice" class="container notice" hidden></div>
 
-  <!-- 3-column layout on desktop, each panel scrolls -->
-  <main class="container main-3col">
+  <!-- Full-width layout -->
+  <main class="container main-full">
     <section>
       <div class="section-head">
         <h2>Live feed</h2>
-        <a class="link" href="./live.html">See all →</a>
       </div>
-      <div class="panel scrollbox">
-        <div id="feed" class="cards"></div>
-      </div>
-    </section>
-
-    <section>
-      <div class="section-head"><h2>Key items</h2></div>
-      <div class="panel scrollbox">
-        <ul id="keyItems" class="key-items"></ul>
+      <div class="panel">
+        <div id="feed" class="cards feed-grid"></div>
       </div>
     </section>
 
-    <section>
-      <div class="section-head"><h2>Reports timeline</h2></div>
-      <div class="panel scrollbox">
-        <div id="timeline" class="timeline"></div>
-
-        <h3 class="mt">Resources</h3>
-        <div id="resources" class="cards"></div>
-      </div>
-    </section>
-
-    <section id="answerSection" class="span-3" hidden>
+    <section id="answerSection" hidden>
       <h2>AI answer</h2>
       <div id="answer" class="card glass"></div>
       <h3>Top sources</h3>
@@ -113,10 +145,11 @@
   </main>
 
   <footer class="container">
-    <small>Last synced: <span id="lastSynced">–</span></small>
+    <small>Last synced: <span id="lastSynced">–</span> • <a href="./settings.html">Settings</a></small>
   </footer>
 
   <script src="./assets/theme.js" defer></script>
   <script type="module" src="./assets/app.js"></script>
+  <script type="module" src="./assets/chat.js"></script>
 </body>
 </html>

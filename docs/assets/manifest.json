@@ -1,1 +1,39 @@
-
+{
+  "name": "EUR-Lex Research Feed",
+  "short_name": "EUR-Lex Feed",
+  "description": "Monitor EU legal updates with smart filtering and notifications",
+  "start_url": "../index.html",
+  "display": "standalone",
+  "background_color": "#0b0e14",
+  "theme_color": "#3b82f6",
+  "orientation": "any",
+  "scope": "../",
+  "categories": ["news", "productivity", "business"],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Live Feed",
+      "short_name": "Feed",
+      "url": "../live.html",
+      "description": "View the live feed of updates"
+    },
+    {
+      "name": "Settings",
+      "short_name": "Settings",
+      "url": "../settings.html",
+      "description": "Manage feeds, keywords, and notifications"
+    }
+  ],
+  "permissions": [
+    "notifications"
+  ],
+  "prefer_related_applications": false
+}

@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Settings — EUR-Lex Research Feed</title>
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="./assets/manifest.json" />
+  <link rel="stylesheet" href="./assets/ui.css" />
+</head>
+<body>
+  <header class="site glass">
+    <div class="container header-inner">
+      <a href="./index.html" class="brand-link">
+        <div class="brand">EUR-Lex Research Feed</div>
+      </a>
+      <div class="header-nav">
+        <a href="./index.html" class="nav-link">← Back to Feed</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container settings-page">
+    <h1 class="page-title">Settings</h1>
+
+    <!-- Tab Navigation -->
+    <nav class="tabs-nav">
+      <button class="tab-btn active" data-tab="feeds">Feeds</button>
+      <button class="tab-btn" data-tab="keywords">Keywords</button>
+      <button class="tab-btn" data-tab="categories">Categories</button>
+      <button class="tab-btn" data-tab="notifications">Notifications</button>
+      <button class="tab-btn" data-tab="ai">AI</button>
+      <button class="tab-btn" data-tab="import-export">Import/Export</button>
+    </nav>
+
+    <!-- Tab Panels -->
+    <div class="tab-panels">
+      
+      <!-- Feeds Tab -->
+      <section class="tab-panel active" data-panel="feeds">
+        <div class="panel-header">
+          <h2>RSS Feeds</h2>
+          <p class="panel-desc">Add and manage RSS/Atom feeds to monitor. Toggle feeds on/off to filter your view.</p>
+        </div>
+        
+        <div class="add-form">
+          <input type="url" id="newFeedUrl" placeholder="https://example.com/feed.rss" class="input-field" />
+          <input type="text" id="newFeedName" placeholder="Feed name (optional)" class="input-field" />
+          <button id="addFeedBtn" class="btn primary">Add Feed</button>
+        </div>
+
+        <div id="feedsList" class="items-list"></div>
+      </section>
+
+      <!-- Keywords Tab -->
+      <section class="tab-panel" data-panel="keywords">
+        <div class="panel-header">
+          <h2>Keywords</h2>
+          <p class="panel-desc">Keywords help filter and highlight relevant content. Items matching your keywords are prioritized.</p>
+        </div>
+
+        <div class="add-form">
+          <input type="text" id="newKeyword" placeholder="Enter keyword..." class="input-field" />
+          <button id="addKeywordBtn" class="btn primary">Add Keyword</button>
+        </div>
+
+        <div class="bulk-actions">
+          <button id="enableAllKw" class="btn subtle small">Enable All</button>
+          <button id="disableAllKw" class="btn subtle small">Disable All</button>
+        </div>
+
+        <div id="keywordsList" class="items-list chips"></div>
+      </section>
+
+      <!-- Categories Tab -->
+      <section class="tab-panel" data-panel="categories">
+        <div class="panel-header">
+          <h2>Categories</h2>
+          <p class="panel-desc">Enable or disable content categories. Disabled categories will be hidden from your feed.</p>
+        </div>
+
+        <div id="categoriesList" class="items-list"></div>
+      </section>
+
+      <!-- Notifications Tab -->
+      <section class="tab-panel" data-panel="notifications">
+        <div class="panel-header">
+          <h2>Notifications</h2>
+          <p class="panel-desc">Get browser notifications when new relevant items appear.</p>
+        </div>
+
+        <div class="settings-form">
+          <div class="setting-row">
+            <div class="setting-info">
+              <label class="setting-label">Enable Notifications</label>
+              <p class="setting-desc">Receive browser notifications for new items matching your keywords</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="notifEnabled" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row" id="notifPermissionRow" style="display:none">
+            <div class="setting-info">
+              <label class="setting-label">Permission Status</label>
+              <p class="setting-desc" id="permissionStatus">Checking...</p>
+            </div>
+            <button id="requestPermBtn" class="btn primary small">Grant Permission</button>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label class="setting-label">Check Interval</label>
+              <p class="setting-desc">How often to check for new items (while page is open)</p>
+            </div>
+            <select id="pollInterval" class="select-field">
+              <option value="5">Every 5 minutes</option>
+              <option value="15">Every 15 minutes</option>
+              <option value="30">Every 30 minutes</option>
+              <option value="60">Every hour</option>
+            </select>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label class="setting-label">Show Badge</label>
+              <p class="setting-desc">Show unread count badge in the header</p>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="notifBadge" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label class="setting-label">Test Notification</label>
+              <p class="setting-desc">Send a test notification to verify your setup</p>
+            </div>
+            <button id="testNotifBtn" class="btn subtle small">Send Test</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- AI Tab -->
+      <section class="tab-panel" data-panel="ai">
+        <div class="panel-header">
+          <h2>AI Assistant</h2>
+          <p class="panel-desc">Configure OpenAI to get AI-powered answers and insights about your feed items.</p>
+        </div>
+
+        <div class="settings-form">
+          <div class="setting-row">
+            <div class="setting-info">
+              <label class="setting-label">OpenAI API Key</label>
+              <p class="setting-desc">Your API key from <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a></p>
+            </div>
+            <input type="password" id="openaiKey" placeholder="sk-..." class="input-field" style="max-width:300px" />
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label class="setting-label">Model</label>
+              <p class="setting-desc">Choose the AI model to use</p>
+            </div>
+            <select id="openaiModel" class="select-field">
+              <option value="gpt-4o-mini">GPT-4o Mini (fast, cheap)</option>
+              <option value="gpt-4o">GPT-4o (best quality)</option>
+              <option value="gpt-4.1">GPT-4.1</option>
+              <option value="gpt-4.1-mini">GPT-4.1 Mini</option>
+              <option value="gpt-5.1">GPT-5.1 (no reasoning)</option>
+              <option value="gpt-5.1:reasoning=medium">GPT-5.1 (medium reasoning)</option>
+              <option value="gpt-5.1:reasoning=high">GPT-5.1 (high reasoning)</option>
+              <option value="o3">o3 (reasoning)</option>
+              <option value="o4-mini">o4-mini (reasoning)</option>
+              <option value="gpt-4-turbo">GPT-4 Turbo</option>
+              <option value="gpt-3.5-turbo">GPT-3.5 Turbo (fastest)</option>
+            </select>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <label class="setting-label">Status</label>
+              <p class="setting-desc" id="aiStatus">Not configured</p>
+            </div>
+            <button id="testAiBtn" class="btn subtle small">Test Connection</button>
+          </div>
+        </div>
+
+        <div class="ai-info" style="margin-top:24px; padding:16px; background:var(--surface); border-radius:12px; border:1px solid var(--border)">
+          <h3 style="margin:0 0 8px 0">How to use AI</h3>
+          <p style="color:var(--muted); font-size:14px; margin:0">Once configured, check the "Ask AI" box next to the search bar on the main page. Type a question like "What's new with DORA?" or "Summarize today's ECB news" to get AI-powered answers based on your feed items.</p>
+        </div>
+      </section>
+
+      <!-- Import/Export Tab -->
+      <section class="tab-panel" data-panel="import-export">
+        <div class="panel-header">
+          <h2>Import / Export</h2>
+          <p class="panel-desc">Backup your settings or transfer them to another device.</p>
+        </div>
+
+        <div class="export-section">
+          <h3>Export Settings</h3>
+          <p>Download all your feeds, keywords, and preferences as a JSON file.</p>
+          <button id="exportBtn" class="btn primary">Export Settings</button>
+          <span id="lastExport" class="meta"></span>
+        </div>
+
+        <div class="import-section">
+          <h3>Import Settings</h3>
+          <p>Import settings from a previously exported JSON file. This will replace your current settings.</p>
+          <label class="file-input">
+            <input type="file" id="importFile" accept=".json,application/json" />
+            <span class="btn subtle">Choose File</span>
+            <span id="importFileName" class="meta">No file selected</span>
+          </label>
+          <button id="importBtn" class="btn primary" disabled>Import Settings</button>
+        </div>
+
+        <div class="reset-section">
+          <h3>Reset to Defaults</h3>
+          <p>Clear all custom settings and restore factory defaults.</p>
+          <button id="resetBtn" class="btn danger">Reset All Settings</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="container">
+    <small>EUR-Lex Research Feed — Settings</small>
+  </footer>
+
+  <script src="./assets/theme.js" defer></script>
+  <script type="module">
+    import settings from './assets/settings.js';
+
+    const $ = id => document.getElementById(id);
+    const esc = s => (s||'').replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+
+    // --- Tab Navigation ---
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelector(`[data-panel="${btn.dataset.tab}"]`).classList.add('active');
+      };
+    });
+
+    // --- Feeds ---
+    function renderFeeds() {
+      const feeds = settings.getFeeds();
+      $('feedsList').innerHTML = feeds.map(f => `
+        <div class="item-row" data-id="${esc(f.id)}">
+          <label class="toggle small">
+            <input type="checkbox" ${f.enabled ? 'checked' : ''} data-action="toggle-feed" data-id="${esc(f.id)}" />
+            <span class="toggle-slider"></span>
+          </label>
+          <div class="item-content">
+            <div class="item-name">${esc(f.name)}</div>
+            <div class="item-url meta">${esc(f.url)}</div>
+          </div>
+          <button class="btn-icon" data-action="remove-feed" data-id="${esc(f.id)}" title="Remove feed">×</button>
+        </div>
+      `).join('') || '<p class="empty">No feeds added yet.</p>';
+    }
+
+    $('addFeedBtn').onclick = () => {
+      const url = $('newFeedUrl').value.trim();
+      const name = $('newFeedName').value.trim();
+      if (!url) return alert('Please enter a feed URL');
+      try { new URL(url); } catch { return alert('Invalid URL format'); }
+      settings.addFeed(url, name || url);
+      $('newFeedUrl').value = '';
+      $('newFeedName').value = '';
+      renderFeeds();
+    };
+
+    $('feedsList').onclick = e => {
+      const id = e.target.dataset.id;
+      if (!id) return;
+      if (e.target.dataset.action === 'toggle-feed') {
+        settings.toggleFeed(id);
+      } else if (e.target.dataset.action === 'remove-feed') {
+        if (confirm('Remove this feed?')) {
+          settings.removeFeed(id);
+          renderFeeds();
+        }
+      }
+    };
+
+    // --- Keywords ---
+    function renderKeywords() {
+      const keywords = settings.getKeywords();
+      $('keywordsList').innerHTML = keywords.map(k => `
+        <div class="chip ${k.enabled ? 'active' : ''}" data-id="${esc(k.id)}">
+          <span class="chip-text">${esc(k.term)}</span>
+          <button class="chip-toggle" data-action="toggle-kw" data-id="${esc(k.id)}">${k.enabled ? '✓' : '○'}</button>
+          <button class="chip-remove" data-action="remove-kw" data-id="${esc(k.id)}">×</button>
+        </div>
+      `).join('') || '<p class="empty">No keywords added yet.</p>';
+    }
+
+    $('addKeywordBtn').onclick = () => {
+      const term = $('newKeyword').value.trim();
+      if (!term) return;
+      settings.addKeyword(term);
+      $('newKeyword').value = '';
+      renderKeywords();
+    };
+
+    $('newKeyword').onkeydown = e => {
+      if (e.key === 'Enter') $('addKeywordBtn').click();
+    };
+
+    $('keywordsList').onclick = e => {
+      const id = e.target.dataset.id;
+      if (!id) return;
+      if (e.target.dataset.action === 'toggle-kw') {
+        settings.toggleKeyword(id);
+        renderKeywords();
+      } else if (e.target.dataset.action === 'remove-kw') {
+        settings.removeKeyword(id);
+        renderKeywords();
+      }
+    };
+
+    $('enableAllKw').onclick = () => {
+      settings.getKeywords().forEach(k => {
+        if (!k.enabled) settings.toggleKeyword(k.id);
+      });
+      renderKeywords();
+    };
+
+    $('disableAllKw').onclick = () => {
+      settings.getKeywords().forEach(k => {
+        if (k.enabled) settings.toggleKeyword(k.id);
+      });
+      renderKeywords();
+    };
+
+    // --- Categories ---
+    function renderCategories() {
+      const categories = settings.getCategories();
+      $('categoriesList').innerHTML = categories.map(c => `
+        <div class="item-row" data-id="${esc(c.id)}">
+          <label class="toggle">
+            <input type="checkbox" ${c.enabled ? 'checked' : ''} data-action="toggle-cat" data-id="${esc(c.id)}" />
+            <span class="toggle-slider"></span>
+          </label>
+          <div class="item-content">
+            <div class="item-name">${esc(c.name)}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    $('categoriesList').onclick = e => {
+      const id = e.target.dataset.id;
+      if (id && e.target.dataset.action === 'toggle-cat') {
+        settings.toggleCategory(id);
+      }
+    };
+
+    // --- Notifications ---
+    function renderNotifications() {
+      const notif = settings.getNotificationSettings();
+      $('notifEnabled').checked = notif.enabled;
+      $('pollInterval').value = notif.pollIntervalMinutes;
+      $('notifBadge').checked = notif.showBadge;
+
+      // Permission status
+      if ('Notification' in window) {
+        $('notifPermissionRow').style.display = '';
+        const status = Notification.permission;
+        $('permissionStatus').textContent = status === 'granted' 
+          ? '✓ Granted' 
+          : status === 'denied' 
+            ? '✗ Denied (change in browser settings)' 
+            : 'Not yet requested';
+        $('requestPermBtn').disabled = status !== 'default';
+        $('requestPermBtn').style.display = status === 'default' ? '' : 'none';
+      }
+    }
+
+    $('notifEnabled').onchange = () => {
+      settings.updateNotificationSettings({ enabled: $('notifEnabled').checked });
+    };
+
+    $('pollInterval').onchange = () => {
+      settings.updateNotificationSettings({ pollIntervalMinutes: parseInt($('pollInterval').value) });
+    };
+
+    $('notifBadge').onchange = () => {
+      settings.updateNotificationSettings({ showBadge: $('notifBadge').checked });
+    };
+
+    $('requestPermBtn').onclick = async () => {
+      const result = await Notification.requestPermission();
+      renderNotifications();
+      if (result === 'granted') {
+        new Notification('EUR-Lex Research Feed', { body: 'Notifications enabled!' });
+      }
+    };
+
+    $('testNotifBtn').onclick = () => {
+      if (!('Notification' in window)) return alert('Notifications not supported');
+      if (Notification.permission !== 'granted') {
+        return alert('Please grant notification permission first');
+      }
+      new Notification('EUR-Lex Research Feed', {
+        body: 'This is a test notification. Everything is working!',
+        icon: './assets/icon.svg',
+        tag: 'test'
+      });
+    };
+
+    // --- Import/Export ---
+    function renderImportExport() {
+      const s = settings.get();
+      if (s.lastExport) {
+        $('lastExport').textContent = `Last exported: ${new Date(s.lastExport).toLocaleString()}`;
+      }
+    }
+
+    $('exportBtn').onclick = () => {
+      const data = settings.exportSettings();
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `eurlex-settings-${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      renderImportExport();
+    };
+
+    $('importFile').onchange = () => {
+      const file = $('importFile').files[0];
+      $('importFileName').textContent = file ? file.name : 'No file selected';
+      $('importBtn').disabled = !file;
+    };
+
+    $('importBtn').onclick = async () => {
+      const file = $('importFile').files[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        if (settings.importSettings(text)) {
+          alert('Settings imported successfully!');
+          renderAll();
+        } else {
+          alert('Failed to import settings. Invalid format.');
+        }
+      } catch (e) {
+        alert('Error reading file: ' + e.message);
+      }
+    };
+
+    $('resetBtn').onclick = () => {
+      if (confirm('Are you sure you want to reset all settings to defaults? This cannot be undone.')) {
+        settings.reset();
+        renderAll();
+        alert('Settings reset to defaults.');
+      }
+    };
+
+    // --- AI ---
+    function renderAI() {
+      const ai = settings.getOpenAISettings();
+      $('openaiKey').value = ai.apiKey || '';
+      $('openaiModel').value = ai.model || 'gpt-4o-mini';
+      $('aiStatus').textContent = ai.apiKey ? '✓ API key configured' : 'Not configured';
+      $('aiStatus').style.color = ai.apiKey ? 'var(--accent)' : 'var(--muted)';
+    }
+
+    $('openaiKey').onchange = () => {
+      const key = $('openaiKey').value.trim();
+      settings.updateOpenAISettings({ apiKey: key });
+      renderAI();
+    };
+
+    $('openaiModel').onchange = () => {
+      settings.updateOpenAISettings({ model: $('openaiModel').value });
+    };
+
+    $('testAiBtn').onclick = async () => {
+      const key = $('openaiKey').value.trim();
+      if (!key) {
+        return alert('Please enter an API key first');
+      }
+      
+      $('testAiBtn').disabled = true;
+      $('testAiBtn').textContent = 'Testing...';
+      
+      try {
+        const response = await fetch('https://api.openai.com/v1/models', {
+          headers: { 'Authorization': `Bearer ${key}` }
+        });
+        
+        if (response.ok) {
+          alert('✓ Connection successful! Your API key is valid.');
+          settings.updateOpenAISettings({ apiKey: key });
+          renderAI();
+        } else if (response.status === 401) {
+          alert('✗ Invalid API key. Please check and try again.');
+        } else {
+          alert(`✗ API error: ${response.status}`);
+        }
+      } catch (e) {
+        alert(`✗ Connection failed: ${e.message}`);
+      } finally {
+        $('testAiBtn').disabled = false;
+        $('testAiBtn').textContent = 'Test Connection';
+      }
+    };
+
+    // --- Initial Render ---
+    function renderAll() {
+      renderFeeds();
+      renderKeywords();
+      renderCategories();
+      renderNotifications();
+      renderAI();
+      renderImportExport();
+    }
+
+    settings.load();
+    renderAll();
+  </script>
+</body>
+</html>
+
